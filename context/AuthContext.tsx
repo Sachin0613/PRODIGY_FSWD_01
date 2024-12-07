@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useCallback, useEffect } from 'react';
 import { AuthState, LoginCredentials, RegisterData, User } from '../types/auth';
-import { loginUser, registerUser } from '../services/auth';
+import { loginUser, registerUser } from '../types/auth';
 import { getToken, setToken, removeToken, decodeToken, isTokenValid } from '../utils/token';
 
 interface AuthContextType extends AuthState {
