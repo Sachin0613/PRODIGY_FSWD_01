@@ -1,11 +1,11 @@
 # **Secure User Authentication**
-This project demonstrates the use of **Secure User Authenticationin** a React application created with Vite.
+This project demonstrates the use of **Secure User Authentication** a React application created with Vite.
 
 
 ![1 (2)](https://github.com/user-attachments/assets/6e76183a-7b67-46c4-8556-3023d0253111)
 
 
-This repository contains a secure authentication application built using React and Tailwind CSS. The application includes features such as user registration, login, and a protected dashboard. The background image for the application is fetched from Unsplash.
+This repository contains a secure authentication application built using React , Tailwind CSS and Type Script. The application includes features such as user registration, login, and a protected dashboard. The background image for the application is fetched from Unsplash.
 
 # **Features**
 
