@@ -1,35 +1,41 @@
-import React, { createContext, useContext, useReducer, useCallback, useEffect } from 'react';
-import { AuthState, LoginCredentials, RegisterData, User } from '../types/auth';
-import { loginUser, registerUser } from '../types/auth';
-import { getToken, setToken, removeToken, decodeToken, isTokenValid } from '../utils/token';
+import React, { createContext, useContext, useReducer, useCallback } from 'react';
+import { AuthState, LoginCredentials, RegisterCredentials, User } from '../types/auth';
+
 
 interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<void>;
-  register: (data: RegisterData) => Promise<void>;
+  register: (credentials: RegisterCredentials) => Promise<void>;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 type AuthAction =
-  | { type: 'LOGIN_SUCCESS'; payload: { user: User; token: string } }
+  | { type: 'LOGIN_SUCCESS'; payload: User }
   | { type: 'LOGOUT' }
   | { type: 'SET_LOADING'; payload: boolean };
 
-const authReducer = (state: AuthState, action: AuthAction): AuthState => {
+const initialState: AuthState = {
+  user: null,
+  isAuthenticated: false,
+  isLoading: false,
+};
+
+function authReducer(state: AuthState, action: AuthAction): AuthState {
   switch (action.type) {
     case 'LOGIN_SUCCESS':
       return {
         ...state,
+        user: action.payload,
         isAuthenticated: true,
-        user: action.payload.user,
         isLoading: false,
       };
     case 'LOGOUT':
       return {
         ...state,
-        isAuthenticated: false,
         user: null,
+        isAuthenticated: false,
+        isLoading: false,
       };
     case 'SET_LOADING':
       return {
@@ -39,55 +45,57 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
     default:
       return state;
   }
-};
-
-const initialState: AuthState = {
-  isAuthenticated: false,
-  user: null,
-  isLoading: true,
-};
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-  // Check for existing token on mount
-  useEffect(() => {
-    const token = getToken();
-    if (token && isTokenValid(token)) {
-      const user = decodeToken(token);
-      dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token } });
-    }
-    dispatch({ type: 'SET_LOADING', payload: false });
-  }, []);
-
   const login = useCallback(async (credentials: LoginCredentials) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
-      const { user, token } = await loginUser(credentials);
-      setToken(token);
-      dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token } });
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // In a real app, you would make an API call here
+      const user: User = {
+        id: '1',
+        email: credentials.email,
+        name: 'John Doe',
+        role: 'user',
+      };
+      
+      dispatch({ type: 'LOGIN_SUCCESS', payload: user });
+      localStorage.setItem('auth_token', 'dummy_token');
     } catch (error) {
+      console.error('Login failed:', error);
       throw error;
-    } finally {
-      dispatch({ type: 'SET_LOADING', payload: false });
     }
   }, []);
 
-  const register = useCallback(async (data: RegisterData) => {
+  const register = useCallback(async (credentials: RegisterCredentials) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
-      const { user, token } = await registerUser(data);
-      setToken(token);
-      dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token } });
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // In a real app, you would make an API call here
+      const user: User = {
+        id: '1',
+        email: credentials.email,
+        name: credentials.name,
+        role: 'user',
+      };
+      
+      dispatch({ type: 'LOGIN_SUCCESS', payload: user });
+      localStorage.setItem('auth_token', 'dummy_token');
     } catch (error) {
+      console.error('Registration failed:', error);
       throw error;
-    } finally {
-      dispatch({ type: 'SET_LOADING', payload: false });
     }
   }, []);
 
   const logout = useCallback(() => {
-    removeToken();
+    localStorage.removeItem('auth_token');
     dispatch({ type: 'LOGOUT' });
   }, []);
 
@@ -98,10 +106,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export const useAuth = () => {
+export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-};
+}
