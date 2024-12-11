@@ -53,10 +53,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = useCallback(async (credentials: LoginCredentials) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
-      // Simulate API call
+      
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // In a real app, you would make an API call here
+      
       const user: User = {
         id: '1',
         email: credentials.email,
@@ -75,10 +75,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const register = useCallback(async (credentials: RegisterCredentials) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
-      // Simulate API call
+    
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // In a real app, you would make an API call here
+    
       const user: User = {
         id: '1',
         email: credentials.email,
